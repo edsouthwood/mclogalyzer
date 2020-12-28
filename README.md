@@ -1,4 +1,4 @@
-# MCLogalyzer - python 3 #
+# MCLogalyzer - python 3 version #
 
 **Some syntax change to make this script python3 compatible.**
 
