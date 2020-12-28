@@ -3,5 +3,5 @@
 .project
 .pydevproject
 tests/
-
+build/
 .idea/
