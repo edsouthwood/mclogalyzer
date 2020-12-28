@@ -193,7 +193,7 @@ class UserStats:
 
     @property
     def death_types(self):
-        return sorted(list(self._death_types.items()), key=lambda k: k[1])
+        return sorted(self._death_types.items(), key=lambda k: k[1])
 
     @property
     def achievement_count(self):
@@ -281,7 +281,7 @@ def grep_log_datetime(date, line):
     try:
         d = time.strptime(line.split(" ")[0], "[%H:%M:%S]")
     except ValueError:
-        print("### Warning: Unable to parse date in line=%s" % line)
+        print "### Warning: Unable to parse date in line=%s" % line
         return None
     return datetime.datetime(
         year=date.year, month=date.month, day=date.day,
@@ -292,31 +292,30 @@ def grep_log_datetime(date, line):
 def grep_login_username(line):
     search = REGEX_LOGIN_USERNAME.search(line)
     if not search:
-        print("### Warning: Unable to find login username:", line)
+        print "### Warning: Unable to find login username:", line
         return ""
     username = search.group(1).lstrip().rstrip()
-    #return username.decode("ascii", "ignore").encode("ascii", "ignore")
-    return username
+    return username.decode("ascii", "ignore").encode("ascii", "ignore")
+
 
 def grep_logout_username(line):
     search = REGEX_LOGOUT_USERNAME.search(line)
     if not search:
         search = REGEX_LOGOUT_USERNAME2.search(line)
         if not search:
-            print("### Warning: Unable to find username:", line)
+            print "### Warning: Unable to find username:", line
             return ""
     username = search.group(1).lstrip().rstrip()
-    #return username.decode("ascii", "ignore").encode("ascii", "ignore")
-    return username
+    return username.decode("ascii", "ignore").encode("ascii", "ignore")
 
 
 def grep_kick_username(line):
     search = REGEX_KICK_USERNAME.search(line)
     if not search:
-        print("### Warning: Unable to find kick logout username:", line)
+        print "### Warning: Unable to find kick logout username:", line
         return ""
-    #return search.group(1)[:-1].decode("ascii", "ignore").encode("ascii", "ignore")
-    return search.group(1)[:-1]
+    return search.group(1)[:-1].decode("ascii", "ignore").encode("ascii", "ignore")
+
 
 def grep_death(line):
     for regex in REGEX_DEATH_MESSAGES:
@@ -331,11 +330,11 @@ def grep_chatlog(line):
 def grep_achievement(line):
     search = REGEX_ACHIEVEMENT.search(line)
     if not search:
-        print("### Warning: Unable to find achievement username or achievement:", line)
+        print "### Warning: Unable to find achievement username or achievement:", line
         return None, None
     username = search.group(1)
-    #return username.decode("ascii", "ignore").encode("ascii", "ignore"), search.group(2)
-    return username, search.group(2)
+    return username.decode("ascii", "ignore").encode("ascii", "ignore"), search.group(2)
+
 
 def format_delta(timedelta, days=True, maybe_years=False):
     seconds = timedelta.seconds
@@ -357,7 +356,7 @@ def format_delta(timedelta, days=True, maybe_years=False):
 
 def parse_whitelist(whitelist_path):
     json_data = json.load(open(whitelist_path))
-    return [x["name"] for x in json_data]
+    return map(lambda x: x["name"], json_data)
 
 
 def parse_logs(logdir, since=None, whitelist_users=None):
@@ -365,7 +364,7 @@ def parse_logs(logdir, since=None, whitelist_users=None):
     chat = []
     server = ServerStats()
     online_players = set()
-    date = None
+
     first_date = None
     for logname in sorted(os.listdir(logdir)):
         if not re.match("\d{4}-\d{2}-\d{2}-\d+\.log\.gz", logname):
@@ -375,9 +374,9 @@ def parse_logs(logdir, since=None, whitelist_users=None):
         thisChatDay = ChatDay(today)
         if first_date is None:
             first_date = today
-        print("Parsing log %s (%s) ..." % (logname, today))
+        print "Parsing log %s (%s) ..." % (logname, today)
 
-        logfile = gzip.open(os.path.join(logdir, logname),'rt')
+        logfile = gzip.open(os.path.join(logdir, logname))
 
         for line in logfile:
             line = line.rstrip()
@@ -433,7 +432,7 @@ def parse_logs(logdir, since=None, whitelist_users=None):
                 if date is None or (since is not None and date < since):
                     continue
 
-                for user in list(users.values()):
+                for user in users.values():
                     user.handle_logout(date)
                 online_players = set()
 
@@ -482,7 +481,7 @@ def parse_logs(logdir, since=None, whitelist_users=None):
             if username not in users:
                 users[username] = UserStats(username)
 
-    users = list(users.values())
+    users = users.values()
     users.sort(key=lambda user: user.time, reverse=True)
 
     server._statistics_since = since if since is not None else first_date
@@ -535,7 +534,7 @@ def main():
         try:
             d = time.strptime(args["since"], "%Y-%m-%d %H:%M:%S")
         except ValueError:
-            print("Invalid datetime format! The format must be year-month-day hour:minute:second .")
+            print "Invalid datetime format! The format must be year-month-day hour:minute:second ."
             sys.exit(1)
         since = datetime.datetime(*(d[0:6]))
 
@@ -552,7 +551,7 @@ def main():
     #print template_path
     #print template_dir, template_name
     if not os.path.exists(template_path):
-        print("Unable to find template file %s!" % template_path)
+        print "Unable to find template file %s!" % template_path
         sys.exit(1)
 
     env = jinja2.Environment(loader=jinja2.FileSystemLoader(template_dir))
