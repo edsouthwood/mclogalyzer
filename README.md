@@ -1,6 +1,8 @@
-# MCLogalyzer #
+# MCLogalyzer - python 3 #
 
-This is a small Python script to analyze your Minecraft server log file and to
+**Some syntax change to make this script python3 compatible**
+
+This is a small Python3 script to analyze your Minecraft server log file and to
 generate some nice statistics as HTML-File.
 
 <div align="center">
